@@ -11,13 +11,12 @@ namespace RabbitMQ.Consumer
         static void Main(string[] args)
         {
             var factory = new ConnectionFactory();
-            factory.Uri = new Uri("Cloud Link");
             factory.HostName = "localhost";
             using (var connection = factory.CreateConnection())
             {
                 using (var channel = connection.CreateModel())
                 {
-                    channel.QueueDeclare("FirstQueue", durable: true, exclusive: false, autoDelete: false, null);
+                    channel.QueueDeclare("TestQueue", durable: true, exclusive: false, autoDelete: false, null);
                     /*
                     *  Mesajların eşit dağılımı için derekli yapılandırmayı gerçekleştiriyoruz.
                     */
@@ -34,7 +33,7 @@ namespace RabbitMQ.Consumer
                          */
                         channel.BasicAck(deliveryTag: argument.DeliveryTag, multiple: false);
                     };
-                    channel.BasicConsume(queue: "FirstQueue", autoAck: false, consumer: consumer);
+                    channel.BasicConsume(queue: "TestQueue", autoAck: false, consumer: consumer);
                 }
             }
             Console.ReadLine();
