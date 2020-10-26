@@ -22,18 +22,18 @@ namespace RabbitMQ.Consumer
                     */
                     channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
                     var consumer = new EventingBasicConsumer(channel);
+                    channel.BasicConsume(queue: "TestQueue", autoAck: false, consumer: consumer);
                     consumer.Received += (model, argument) =>
                     {
                         var message = Encoding.UTF8.GetString(argument.Body.ToArray());
                         Console.WriteLine($"Mesaj Alındı:{message}");
-                        Thread.Sleep(700);
+                        Thread.Sleep(2000);
                         Console.WriteLine($"Mesaj işlendi!");
                         /*
-                         * Mesaj başarılı bir şekilde işlendi artık kuyruktan silebilirsin demiş olduk
+                         * Mesaj başarılı bir şekilde işlendi.Yeni mesajı gönderebilirsin demiş olduk
                          */
                         channel.BasicAck(deliveryTag: argument.DeliveryTag, multiple: false);
                     };
-                    channel.BasicConsume(queue: "TestQueue", autoAck: false, consumer: consumer);
                 }
             }
             Console.ReadLine();
