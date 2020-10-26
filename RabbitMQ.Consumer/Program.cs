@@ -10,7 +10,8 @@ namespace RabbitMQ.Consumer
         static void Main(string[] args)
         {
             var factory = new ConnectionFactory();
-            factory.Uri = new Uri("amqps://rqsnzfbj:5DYTnOwAMXKArn0bR0yAGxVpZm78mP2O@toad.rmq.cloudamqp.com/rqsnzfbj");
+            factory.Uri = new Uri("Cloud Link");
+            factory.HostName = "localhost";
             using (var connection = factory.CreateConnection())
             {
                 using (var channel = connection.CreateModel())

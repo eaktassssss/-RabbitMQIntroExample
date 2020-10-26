@@ -10,6 +10,7 @@ namespace RabbitMQ.Publisher
         {
             string message = "Test Mesaj";
             var factory = new ConnectionFactory();
+            factory.Uri = new Uri("Cloud Link");
             factory.HostName = "localhost";
             using (var connection = factory.CreateConnection())
             {
