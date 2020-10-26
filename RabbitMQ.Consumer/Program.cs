@@ -27,7 +27,6 @@ namespace RabbitMQ.Consumer
                     {
                         var message = Encoding.UTF8.GetString(argument.Body.ToArray());
                         Console.WriteLine($"Mesaj Alındı:{message}");
-                        Thread.Sleep(2000);
                         Console.WriteLine($"Mesaj işlendi!");
                         /*
                          * Mesaj başarılı bir şekilde işlendi.Yeni mesajı gönderebilirsin demiş olduk
