@@ -16,9 +16,15 @@ namespace RabbitMQ.Publisher
             {
                 using (var channel = connection.CreateModel())
                 {
-                    var result = channel.QueueDeclare("FirstQueue", false, false, false, null);
+                    channel.QueueDeclare("TestQueue", durable: true, exclusive: false, autoDelete: false, null);
+                    
                     var body = Encoding.UTF8.GetBytes(message);
-                    channel.BasicPublish(exchange: "", routingKey: "FirstQueue", null, body: body);
+                    var properties = channel.CreateBasicProperties();
+                    /*
+                     * RabbitMQ instance restart yada çökme durumunda mesajların güvenliği için Persistent özelliğini true set ediyoruz.
+                     */
+                    properties.Persistent = true;
+                    channel.BasicPublish(exchange: "", routingKey: "TestQueue", properties, body: body);
                 }
                 Console.WriteLine("Mesajınız gönderildi!");
             }

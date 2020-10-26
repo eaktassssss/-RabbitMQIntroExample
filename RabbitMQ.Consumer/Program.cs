@@ -2,6 +2,7 @@
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
+using System.Threading;
 
 namespace RabbitMQ.Consumer
 {
@@ -16,18 +17,27 @@ namespace RabbitMQ.Consumer
             {
                 using (var channel = connection.CreateModel())
                 {
-                    channel.QueueDeclare("FirstQueue", false, false, false, null);
+                    channel.QueueDeclare("FirstQueue", durable: true, exclusive: false, autoDelete: false, null);
+                    /*
+                    *  Mesajların eşit dağılımı için derekli yapılandırmayı gerçekleştiriyoruz.
+                    */
+                    channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
                     var consumer = new EventingBasicConsumer(channel);
-                    consumer.Received += Consumer_Received;
-                    channel.BasicConsume(queue: "FirstQueue", autoAck: true, consumer: consumer);
+                    consumer.Received += (model, argument) =>
+                    {
+                        var message = Encoding.UTF8.GetString(argument.Body.ToArray());
+                        Console.WriteLine($"Mesaj Alındı:{message}");
+                        Thread.Sleep(700);
+                        Console.WriteLine($"Mesaj işlendi!");
+                        /*
+                         * Mesaj başarılı bir şekilde işlendi artık kuyruktan silebilirsin demiş olduk
+                         */
+                        channel.BasicAck(deliveryTag: argument.DeliveryTag, multiple: false);
+                    };
+                    channel.BasicConsume(queue: "FirstQueue", autoAck: false, consumer: consumer);
                 }
             }
             Console.ReadLine();
-        }
-        private static void Consumer_Received(object sender, BasicDeliverEventArgs e)
-        {
-            var message = Encoding.UTF8.GetString(e.Body.ToArray());
-            Console.WriteLine($"Mesaj Alındı:{message}");
         }
     }
 }
